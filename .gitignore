@@ -1,0 +1,44 @@
+# Python Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Documentation & Report Files (Not needed for online web deployment)
+*.md
+*.docx
+~$*.docx
+*.pdf
+
+# Helper Build & Data Generation Scripts
+build_docx_report.py
+generate_restaurant_data.py
+
+# Jupyter Notebook Files
+*.ipynb
+.ipynb_checkpoints/
+
+# Template Archives & Raw Backup Folders
+archive/
+template/
+
+# IDE & OS Settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Temporary Files
+*.log
+tmp/
+scratch/
+
+# Gemini System Files
+.gemini/
+.system_generated/

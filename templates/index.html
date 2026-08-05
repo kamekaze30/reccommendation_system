@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="author" content="Zaim">
+      <meta name="description" content="Restaurant Recommendation System">
+      <title>Restaurant Recommendation System</title>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
+      <!-- Bootstrap 5.3 -->
+      <link href="/static/css/bootstrap.min.css" rel="stylesheet"/>
+      <!-- AOS Animate on Scroll -->
+      <link href="/static/css/aos.css" rel="stylesheet"/>
+      <!-- Swiper -->
+      <link href="/static/css/swiper-bundle.min.css" rel="stylesheet"/>
+      <!-- FontAwesome icons -->
+      <link rel="stylesheet" href="/static/css/all.min.css"/>
+      <!-- magnific CSS -->
+      <link rel="stylesheet" href="/static/css/magnific-popup.css"/>
+      <!-- Style CSS -->
+      <link rel="stylesheet" href="/static/css/style.css" />
+
+      <style>
+         .ai-control-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+         }
+         .alg-btn {
+            background: #f1f5f9;
+            color: #1e293b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin: 4px;
+            transition: all 0.25s ease;
+         }
+         .alg-btn.active, .alg-btn:hover {
+            background: var(--primary, #e11d48);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(225, 29, 72, 0.25);
+         }
+         .score-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            z-index: 2;
+         }
+         .fav-btn-heart {
+            background: rgba(255,255,255,0.95);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e11d48;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+         }
+         .fav-btn-heart:hover {
+            transform: scale(1.15);
+            background: #ffffff;
+         }
+         .mcard {
+            transition: all 0.3s ease;
+            cursor: pointer;
+         }
+         .mcard:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.12) !important;
+         }
+         .btn-inspect-gradient {
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
+            transition: all 0.25s ease;
+         }
+         .btn-inspect-gradient:hover {
+            background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(225, 29, 72, 0.35);
+            transform: translateY(-2px);
+         }
+         .quiz-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            height: 100%;
+         }
+
+         /* Favorites Modal */
+         #favModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 9999999 !important;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+         }
+         .fav-box {
+            background: #ffffff;
+            width: 90%;
+            max-width: 850px;
+            max-height: 85vh;
+            border-radius: 24px;
+            padding: 28px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+         }
+
+         /* DETAIL MODAL POPUP MASTER OVERRIDE */
+         #menuPop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 9999999 !important;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+         }
+         .mpbox {
+            background: #ffffff;
+            width: 92%;
+            max-width: 750px;
+            max-height: 90vh;
+            border-radius: 24px;
+            padding: 0;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+         }
+         @media(min-width: 768px) {
+            .mpbox {
+               flex-direction: row;
+            }
+            .mpimg {
+               width: 42%;
+               min-height: 100%;
+            }
+            .mpbody {
+               width: 58%;
+            }
+         }
+         .mpimg img {
+            width: 100%;
+            height: 100%;
+            min-height: 250px;
+            object-fit: cover;
+         }
+         .mpbody {
+            padding: 24px;
+         }
+         .mpclose {
+            position: absolute;
+            top: 14px; right: 14px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+         }
+      </style>
+   </head>
+   <body>
+      <!-- TOP BAR -->
+      <div id="topbar">
+         <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+               <div class="top-contact d-flex flex-wrap">
+                  <span><i class="fas fa-utensils me-1"></i>Restaurant Recommendation System</span>
+                  <span><i class="fas fa-coins me-1"></i>RM (Ringgit Malaysia) Pricing</span>
+                  <span><i class="fas fa-database me-1"></i>500 Venues &amp; 10,000 Ratings</span>
+               </div>
+               <div class="d-flex align-items-center gap-3">
+                  <span class="ttag"><i class="fas fa-heart text-danger me-1"></i>Saved Favorites Enabled</span>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-expand-lg" id="nav">
+         <div class="container">
+            <a class="navbar-brand" href="#hero">
+               <div class="blogo">
+                  <div class="bico"><i class="fas fa-utensils"></i></div>
+                  <div>
+                     <div class="bname">Restaurant<span>Rec</span></div>
+                     <div class="bsub">Recommendation System</div>
+                  </div>
+               </div>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+            <i class="fas fa-bars" style="color:var(--primary);font-size:1.35rem;"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navmenu">
+               <ul class="navbar-nav mx-auto">
+                  <li class="nav-item"><a class="nav-link active" href="#hero">Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#menu">Recommendation Engine</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#quiz">Foodie Craving Quiz</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#analytics">Analytics</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#tech-brief">Tech Brief</a></li>
+               </ul>
+               <div class="d-flex align-items-center gap-2">
+                  <button class="btn btn-outline-danger rounded-pill px-3 py-2 fw-bold" id="btnOpenFavs">
+                     <i class="fas fa-heart me-1"></i>Saved Spots (<span id="favCount">0</span>)
+                  </button>
+                  <a href="#menu" class="nav-link nav-cta"><i class="fas fa-search me-1"></i>Explore Spots</a>
+               </div>
+            </div>
+         </div>
+      </nav>
+
+      <!-- HERO SECTION -->
+      <section id="hero">
+         <div class="hs hs1"></div>
+         <div class="hs hs2"></div>
+         <div class="hbgtxt">RESTAURANT</div>
+         <div class="container">
+            <div class="row align-items-center g-5" style="min-height:88vh;">
+               <div class="col-lg-6">
+                  <div class="hbadge">
+                     <div class="hbi"><i class="fas fa-utensils"></i></div>
+                     <span>Restaurant Recommendation System</span>
+                  </div>
+                  <h1 class="htitle"><span class="hl">Restaurant</span> Recommendation System</h1>
+                  <p class="hdesc">An intelligent dining recommendation system leveraging Content-Based TF-IDF feature vectors, Item-Item KNN Collaborative Filtering, and Hybrid Ensembles (Prices in Ringgit Malaysia RM).</p>
+                  <div class="d-flex flex-wrap gap-3 mb-2">
+                     <a href="#menu" class="btn-red"><i class="fas fa-utensils me-2"></i>Launch Recommendation Engine</a>
+                     <a href="#quiz" class="btn-play" style="border:none; background:#ffffff; color:#1e293b; padding:12px 24px; border-radius:9999px; font-weight:700; text-decoration:none; box-shadow:0 6px 20px rgba(0,0,0,0.06);">
+                        <i class="fas fa-magic me-2" style="color:var(--primary);"></i>Try Foodie Craving Quiz
+                     </a>
+                  </div>
+                  <div class="hstats d-flex gap-3 flex-wrap mt-4">
+                     <div class="hstat"><span class="snum">500<em>+</em></span><small>Dining Venues</small></div>
+                     <div class="sdiv"></div>
+                     <div class="hstat"><span class="snum">10k<em>+</em></span><small>Diner Ratings</small></div>
+                     <div class="sdiv"></div>
+                     <div class="hstat"><span class="snum">10<em>+</em></span><small>Unique Cuisines</small></div>
+                     <div class="sdiv"></div>
+                     <div class="hstat"><span class="snum">4</span><small>Algorithm Models</small></div>
+                  </div>
+               </div>
+               <div class="col-lg-6">
+                  <div style="position:relative;text-align:center;">
+                     <div class="hcircle">
+                        <img src="/static/img/banner-img.jpg" alt="Restaurant & Cafe"/>
+                     </div>
+                     <div class="fcard fc1">
+                        <div class="fcoi r"><i class="fas fa-bolt"></i></div>
+                        <div><span class="fcnum">Hybrid Ensemble</span><span class="fcsm">Model paradigm</span></div>
+                     </div>
+                     <div class="fcard fc2">
+                        <div class="fcoi y"><i class="fas fa-star"></i></div>
+                        <div><span class="fcnum">RM Prices</span><span class="fcsm">Ringgit Malaysia</span></div>
+                     </div>
+                     <div class="fcard fc3">
+                        <div class="fcoi g"><i class="fas fa-heart"></i></div>
+                        <div><span class="fcnum">Saved Spots</span><span class="fcsm">Favorites library</span></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- MARQUEE -->
+      <div class="mqsec">
+         <div class="mqtrack">
+            <div class="mqitem"><i class="fas fa-circle"></i>Restaurant Recommendation System</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Saved Favorites Library</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Hybrid Ensemble Model</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Content-Based TF-IDF</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Item-Item KNN Collaborative</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Foodie Craving Quiz</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>Interactive Detail Inspection</div>
+            <div class="mqitem"><i class="fas fa-circle"></i>500 Venues Catalog</div>
+         </div>
+      </div>
+
+      <!-- RECOMMENDATION ENGINE SECTION -->
+      <section id="menu" style="padding:80px 0;">
+         <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+               <span class="slbl">Multi-Model Engine</span>
+               <h2 class="stitle">Personalized <span>Dining Recommendations</span></h2>
+               <div class="sline"></div>
+               <p class="sdesc mx-auto" style="max-width:580px;">Select a venue or type any restaurant name, filter by location area or RM budget tier, and click any card to inspect full venue details and live links.</p>
+            </div>
+
+            <!-- SEARCH & FILTER CONTROLS -->
+            <div class="ai-control-box" data-aos="fade-up">
+               <div class="row g-3 align-items-center mb-3">
+                  <div class="col-md-6">
+                     <label class="fw-bold mb-1"><i class="fas fa-search me-1 text-danger"></i>Query Dining Spot</label>
+                     <input type="text" id="queryTitle" class="form-control form-control-lg rounded-pill" placeholder="Type or select e.g. Milano, Sakura, Matcha..." list="venueList" value="Milano Bistro">
+                     <datalist id="venueList">
+                        {% for v in featured_venues %}
+                        <option value="{{ v }}">
+                        {% endfor %}
+                     </datalist>
+                  </div>
+                  <div class="col-md-3">
+                     <label class="fw-bold mb-1"><i class="fas fa-map-marker-alt me-1 text-danger"></i>Area Location</label>
+                     <select id="filterLocation" class="form-select form-select-lg rounded-pill">
+                        <option value="All">All Locations</option>
+                        {% for loc in locations %}
+                        <option value="{{ loc }}">{{ loc }}</option>
+                        {% endfor %}
+                     </select>
+                  </div>
+                  <div class="col-md-3">
+                     <label class="fw-bold mb-1"><i class="fas fa-coins me-1 text-danger"></i>RM Budget Tier</label>
+                     <select id="filterPrice" class="form-select form-select-lg rounded-pill">
+                        <option value="All">All RM Price Tiers</option>
+                        <option value="$">RM 15 - RM 30 ($)</option>
+                        <option value="$$">RM 35 - RM 65 ($$)</option>
+                        <option value="$$$">RM 75 - RM 150 ($$$)</option>
+                     </select>
+                  </div>
+               </div>
+
+               <div class="mb-3 text-center">
+                  <span class="fw-bold d-block mb-2"><i class="fas fa-cog me-1 text-danger"></i>Select Recommendation Model Paradigm:</span>
+                  <button class="alg-btn active" data-alg="Hybrid AI Ensemble">⚡ Hybrid Ensemble</button>
+                  <button class="alg-btn" data-alg="Content-Based Filtering">🎭 Content-Based (TF-IDF)</button>
+                  <button class="alg-btn" data-alg="Collaborative Filtering">👥 Collaborative (KNN)</button>
+                  <button class="alg-btn" data-alg="Popularity Baseline">🌟 Popularity Baseline</button>
+               </div>
+
+               <div class="text-center">
+                  <button id="btnFetchRec" class="btn-red px-5 py-3 fs-5"><i class="fas fa-search me-2"></i>Generate Recommendations</button>
+               </div>
+            </div>
+
+            <!-- CUISINE FILTER TABS -->
+            <div class="text-center mb-4" data-aos="fade-up">
+               <button class="filtbtn active" data-f="All">All Cuisines</button>
+               {% for cuis in cuisines %}
+               <button class="filtbtn" data-f="{{ cuis }}">{{ cuis }}</button>
+               {% endfor %}
+            </div>
+
+            <!-- DYNAMIC RECOMMENDATIONS CONTAINER -->
+            <div class="row g-4" id="mgrid">
+               <!-- Dynamic JS Injected Cards -->
+            </div>
+         </div>
+      </section>
+
+      <!-- FOODIE CRAVING QUIZ SECTION -->
+      <section id="quiz" style="background:#f8fafc; padding:80px 0;">
+         <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+               <span class="slbl">3-Step Interactive Preferences</span>
+               <h2 class="stitle">🪄 Foodie <span>Craving Quiz</span></h2>
+               <div class="sline"></div>
+               <p class="sdesc mx-auto" style="max-width:550px;">"What are you in the mood for?" Select your occasion, vibe atmosphere &amp; RM budget tier to compute instant similarity matches.</p>
+            </div>
+
+            <div class="row g-4 mb-4">
+               <div class="col-md-4">
+                  <div class="quiz-card">
+                     <h5 class="fw-bold mb-3"><i class="fas fa-glass-cheers text-danger me-2"></i>1️⃣ Dining Occasion</h5>
+                     <select id="quizOccasion" class="form-select rounded-pill">
+                        <option value="Casual Dining & Hangout">Casual Dining &amp; Hangout</option>
+                        <option value="Romantic Date Night">Romantic Date Night</option>
+                        <option value="Business Lunch / Solo Work">Business Lunch / Solo Work</option>
+                        <option value="Celebration & Birthday Party">Celebration &amp; Birthday Party</option>
+                        <option value="Late Night Craving">Late Night Craving</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <div class="quiz-card">
+                     <h5 class="fw-bold mb-3"><i class="fas fa-coffee text-danger me-2"></i>2️⃣ Vibe &amp; Atmosphere</h5>
+                     <select id="quizVibe" class="form-select rounded-pill">
+                        <option value="Cozy & Aesthetic Cafe">Cozy &amp; Aesthetic Cafe</option>
+                        <option value="Fine Dining & Upscale">Fine Dining &amp; Upscale</option>
+                        <option value="Bustling Bistro & Grill">Bustling Bistro &amp; Grill</option>
+                        <option value="Relaxed Outdoor Terrace">Relaxed Outdoor Terrace</option>
+                        <option value="Quick Casual Eats">Quick Casual Eats</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <div class="quiz-card">
+                     <h5 class="fw-bold mb-3"><i class="fas fa-wallet text-danger me-2"></i>3️⃣ Target RM Budget Tier</h5>
+                     <select id="quizBudget" class="form-select rounded-pill">
+                        <option value="Any Budget">Any Budget</option>
+                        <option value="Budget Friendly ($)">RM 15 - RM 30 ($)</option>
+                        <option value="Moderate ($$)">RM 35 - RM 65 ($$)</option>
+                        <option value="Fine Dining ($$$)">RM 75 - RM 150 ($$$)</option>
+                     </select>
+                  </div>
+               </div>
+            </div>
+
+            <div class="text-center mb-5">
+               <button id="btnRunQuiz" class="btn-red px-5 py-3"><i class="fas fa-wand-magic-sparkles me-2"></i>Get Concierge Matches</button>
+            </div>
+
+            <div class="row g-4" id="quizGrid">
+               <!-- Dynamic Quiz Cards -->
+            </div>
+         </div>
+      </section>
+
+      <!-- DATASET ANALYTICS SECTION -->
+      <section id="analytics" style="padding:80px 0;">
+         <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+               <span class="slbl">Empirical Corpus Metrics</span>
+               <h2 class="stitle">Dataset <span>Analytics Leaderboard</span></h2>
+               <div class="sline"></div>
+            </div>
+
+            <div class="row g-4 text-center">
+               <div class="col-md-3">
+                  <div class="p-4 bg-white rounded-4 shadow-sm">
+                     <div class="fs-1 fw-bold text-danger">{{ total_venues }}</div>
+                     <div class="text-muted fw-semibold">Dining Venues</div>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="p-4 bg-white rounded-4 shadow-sm">
+                     <div class="fs-1 fw-bold text-primary">{{ "{:,}".format(total_ratings) }}</div>
+                     <div class="text-muted fw-semibold">Diner Ratings</div>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="p-4 bg-white rounded-4 shadow-sm">
+                     <div class="fs-1 fw-bold text-success">{{ total_cuisines }}</div>
+                     <div class="text-muted fw-semibold">Unique Cuisines</div>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="p-4 bg-white rounded-4 shadow-sm">
+                     <div class="fs-1 fw-bold text-warning">4.8 ⭐</div>
+                     <div class="text-muted fw-semibold">Average Rating</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- TECHNICAL BRIEF SECTION -->
+      <section id="tech-brief" style="background:#f8fafc; padding:80px 0;">
+         <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+               <span class="slbl">Algorithm Specifications &amp; Formulas</span>
+               <h2 class="stitle">Technical <span>Architecture Brief</span></h2>
+               <div class="sline"></div>
+            </div>
+
+            <div class="row g-4">
+               <div class="col-md-6">
+                  <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                     <h4 class="fw-bold mb-3"><i class="fas fa-file-code text-danger me-2"></i>1. TF-IDF Content-Based Model</h4>
+                     <p>Converts cuisine, features, and location tags into sparse TF-IDF vectors. Computes on-the-fly cosine similarity angles:</p>
+                     <pre class="bg-light p-3 rounded-3"><code>sim = cosine_similarity(tfv_matrix[idx], tfv_matrix)</code></pre>
+                  </div>
+               </div>
+               <div class="col-md-6">
+                  <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                     <h4 class="fw-bold mb-3"><i class="fas fa-network-wired text-primary me-2"></i>2. Item-Item KNN Collaborative Model</h4>
+                     <p>Constructs a sparse User-Restaurant rating matrix across 10,000 ratings. Fits an unsupervised NearestNeighbors model:</p>
+                     <pre class="bg-light p-3 rounded-3"><code>knn_model = NearestNeighbors(metric='cosine', algorithm='brute')</code></pre>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- MY SAVED FAVORITES MODAL -->
+      <div id="favModal">
+         <div class="fav-box">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+               <h3 class="fw-bold mb-0"><i class="fas fa-heart text-danger me-2"></i>My Saved Favorites</h3>
+               <button class="btn btn-outline-secondary rounded-circle" id="favCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="row g-3" id="favGrid">
+               <!-- Dynamic JS Injected Favorites -->
+            </div>
+            <div class="text-end mt-4">
+               <button class="btn btn-outline-danger btn-sm rounded-pill me-2" id="btnClearFavs"><i class="fas fa-trash-alt me-1"></i>Clear All Favorites</button>
+               <button class="btn btn-secondary btn-sm rounded-pill" id="favCloseBtn2">Close</button>
+            </div>
+         </div>
+      </div>
+
+      <!-- DETAIL MODAL POPUP (SARAB DESIGN) -->
+      <div id="menuPop">
+         <div class="mpbox">
+            <button class="mpclose" id="mpClose" onclick="closeDetailModal()" title="✕ Close Modal"><i class="fas fa-times"></i></button>
+            <div class="mpimg"><img id="mpImg" src="" alt=""/></div>
+            <div class="mpbody">
+               
+               <!-- 📌 1. PLACE DETAILS & AMENITIES -->
+               <div class="badge bg-danger mb-2" id="mpCat">CUISINE • LOCATION</div>
+               <h3 id="mpTitle" class="fw-bold mb-1">Restaurant Name</h3>
+               <div id="mpStars" class="text-warning mb-2">⭐ 4.8 / 5.0 Rating</div>
+               
+               <div class="p-3 bg-light rounded-3 mb-3">
+                  <h6 class="fw-bold mb-1 text-dark"><i class="fas fa-info-circle text-danger me-1"></i>1. Place Details &amp; Amenities:</h6>
+                  <p id="mpDesc" class="text-muted small mb-2"></p>
+                  <div id="mpPrice" class="fs-5 fw-bold text-success mb-1"></div>
+                  <p class="small text-muted mb-0"><i class="fas fa-map-marker-alt text-danger me-1"></i>124 Artisan Boulevard, Central Area | ⏰ 10:00 AM - 10:30 PM</p>
+               </div>
+
+               <h6 class="fw-bold mb-2">⭐ Aspect Rating Breakdown:</h6>
+               <div class="row g-2 text-center mb-3">
+                  <div class="col-3"><div class="p-2 bg-light rounded"><small>Food</small><br><strong id="rFood" class="text-primary">4.9</strong></div></div>
+                  <div class="col-3"><div class="p-2 bg-light rounded"><small>Service</small><br><strong id="rServ" class="text-success">4.8</strong></div></div>
+                  <div class="col-3"><div class="p-2 bg-light rounded"><small>Ambience</small><br><strong id="rAmb" class="text-danger">4.9</strong></div></div>
+                  <div class="col-3"><div class="p-2 bg-light rounded"><small>Value</small><br><strong id="rVal" class="text-warning">4.7</strong></div></div>
+               </div>
+
+               <h6 class="fw-bold mt-3 mb-2"><i class="fas fa-comments text-danger me-1"></i>Verified Diner Reviews:</h6>
+               <div id="mpReviews" class="mb-3">
+                  <!-- Dynamic JS Injected Customer Reviews -->
+               </div>
+
+               <!-- 🗺️ 2. LINK TO LOCATION IN REAL WORLD SITUATION -->
+               <h6 class="fw-bold mt-3 mb-2"><i class="fas fa-map-marked-alt text-danger me-1"></i>2. Link to Location in Real World Situation:</h6>
+               <div class="row g-2 mb-3">
+                  <div class="col-6">
+                     <a id="mpMapLink" href="#" target="_blank" class="btn btn-danger btn-sm rounded-pill w-100 fw-bold py-2 shadow-sm">
+                        <i class="fas fa-map-marked-alt me-1"></i>📍 Google Maps Navigation
+                     </a>
+                  </div>
+                  <div class="col-6">
+                     <a id="mpSearchLink" href="#" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill w-100 fw-bold py-2">
+                        <i class="fas fa-globe me-1"></i>🌐 Web Search Info
+                     </a>
+                  </div>
+                  <div class="col-6">
+                     <a id="mpTripLink" href="#" target="_blank" class="btn btn-outline-warning text-dark btn-sm rounded-pill w-100 fw-bold py-2">
+                        <i class="fas fa-star me-1"></i>⭐ TripAdvisor Reviews
+                     </a>
+                  </div>
+                  <div class="col-6">
+                     <a id="mpFoodLink" href="#" target="_blank" class="btn btn-outline-success btn-sm rounded-pill w-100 fw-bold py-2">
+                        <i class="fas fa-motorcycle me-1"></i>🛵 GrabFood Delivery
+                     </a>
+                  </div>
+               </div>
+
+               <button class="btn-red w-100 py-2" id="mpCloseBtn" onclick="closeDetailModal()"><i class="fas fa-times me-2"></i>Close Inspection View</button>
+            </div>
+         </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer id="footer" style="background:#0f172a; color:#fff; padding:40px 0 20px 0;">
+         <div class="container text-center">
+            <h4 class="fw-bold text-white mb-2">🍽️ Restaurant Recommendation System</h4>
+            <p class="text-white-50 mb-1">Developed by Zaim</p>
+         </div>
+      </footer>
+
+      <!-- JS FILES -->
+      <script src="/static/js/bootstrap.bundle.min.js"></script>
+      <script src="/static/js/aos.js"></script>
+      <script>
+         AOS.init({ duration: 800, once: true });
+
+         let currentModel = "Hybrid AI Ensemble";
+         let currentCuisine = "All";
+         let savedFavorites = JSON.parse(localStorage.getItem('gourmet_favorites') || '[]');
+         window.currentResults = [];
+
+         function updateFavBadge() {
+            document.getElementById('favCount').innerText = savedFavorites.length;
+         }
+         updateFavBadge();
+
+         function isFavorite(name) {
+            return savedFavorites.some(item => item.name === name);
+         }
+
+         function toggleFavoriteByName(name, e) {
+            if (e) e.stopPropagation();
+            const item = (window.currentResults || []).find(r => r.name === name);
+            if (!item) return;
+            const idx = savedFavorites.findIndex(i => i.name === name);
+            if (idx > -1) {
+               savedFavorites.splice(idx, 1);
+            } else {
+               savedFavorites.push(item);
+            }
+            localStorage.setItem('gourmet_favorites', JSON.stringify(savedFavorites));
+            updateFavBadge();
+            fetchRecommendations();
+            renderFavoritesGrid();
+         }
+
+         // Favorites Modal Handlers
+         document.getElementById('btnOpenFavs').addEventListener('click', () => {
+            renderFavoritesGrid();
+            const modal = document.getElementById('favModal');
+            modal.style.display = 'flex';
+         });
+         document.getElementById('favCloseBtn').addEventListener('click', () => {
+            const modal = document.getElementById('favModal');
+            modal.style.display = 'none';
+         });
+         document.getElementById('favCloseBtn2').addEventListener('click', () => {
+            const modal = document.getElementById('favModal');
+            modal.style.display = 'none';
+         });
+         document.getElementById('btnClearFavs').addEventListener('click', () => {
+            if (confirm("Are you sure you want to clear all saved favorites?")) {
+               savedFavorites = [];
+               localStorage.setItem('gourmet_favorites', JSON.stringify(savedFavorites));
+               updateFavBadge();
+               renderFavoritesGrid();
+               fetchRecommendations();
+            }
+         });
+
+         function renderFavoritesGrid() {
+            const grid = document.getElementById('favGrid');
+            grid.innerHTML = '';
+            if (savedFavorites.length === 0) {
+               grid.innerHTML = '<div class="col-12 text-center p-5 text-muted fs-5">No saved spots yet. Click the ❤️ icon on any restaurant card to add it to your favorites!</div>';
+               return;
+            }
+            savedFavorites.forEach(item => {
+               const safeName = (item.name || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
+               grid.innerHTML += `
+               <div class="col-md-6">
+                  <div class="card border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-row align-items-center p-2 cursor-pointer" onclick="openDetailModal('${safeName}')">
+                     <img src="${item.image_url || '/static/img/menu/1.jpg'}" style="width:90px; height:90px; object-fit:cover; border-radius:12px;" />
+                     <div class="ms-3 flex-grow-1">
+                        <h6 class="fw-bold mb-1">${item.name}</h6>
+                        <small class="text-muted d-block">${item.cuisine} • <strong class="text-success">${item.rm_price}</strong></small>
+                        <small class="text-muted">📍 ${item.location}</small>
+                     </div>
+                     <button class="btn btn-outline-danger btn-sm rounded-circle me-2" onclick="removeFav('${safeName}', event)"><i class="fas fa-trash-alt"></i></button>
+                  </div>
+               </div>
+               `;
+            });
+         }
+
+         function removeFav(name, e) {
+            if (e) e.stopPropagation();
+            const idx = savedFavorites.findIndex(i => i.name === name);
+            if (idx > -1) savedFavorites.splice(idx, 1);
+            localStorage.setItem('gourmet_favorites', JSON.stringify(savedFavorites));
+            updateFavBadge();
+            renderFavoritesGrid();
+            fetchRecommendations();
+         }
+
+         // Model Switch Buttons
+         document.querySelectorAll('.alg-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+               document.querySelectorAll('.alg-btn').forEach(b => b.classList.remove('active'));
+               this.classList.add('active');
+               currentModel = this.getAttribute('data-alg');
+               fetchRecommendations();
+            });
+         });
+
+         // Cuisine Filter Buttons
+         document.querySelectorAll('.filtbtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+               document.querySelectorAll('.filtbtn').forEach(b => b.classList.remove('active'));
+               this.classList.add('active');
+               currentCuisine = this.getAttribute('data-f');
+               fetchRecommendations();
+            });
+         });
+
+         document.getElementById('btnFetchRec').addEventListener('click', fetchRecommendations);
+
+         function fetchRecommendations() {
+            const queryTitle = document.getElementById('queryTitle').value;
+            const location = document.getElementById('filterLocation').value;
+            const price = document.getElementById('filterPrice').value;
+
+            fetch('/api/recommend', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                  title: queryTitle,
+                  method: currentModel,
+                  cuisine: currentCuisine,
+                  location: location,
+                  price: price,
+                  top_n: 9
+               })
+            })
+            .then(res => res.json())
+            .then(data => {
+               const grid = document.getElementById('mgrid');
+               grid.innerHTML = '';
+               if (data.status === 'success' && data.results.length > 0) {
+                  window.currentResults = data.results;
+                  data.results.forEach((item, idx) => {
+                     const favActive = isFavorite(item.name) ? 'fas fa-heart text-danger' : 'far fa-heart text-muted';
+                     const safeName = (item.name || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                     const cardHtml = `
+                     <div class="col-sm-6 col-lg-4 mwrap">
+                        <div class="mcard shadow-sm border-0 rounded-4 overflow-hidden position-relative" onclick="openDetailModal('${safeName}')">
+                           <div class="position-absolute top-0 start-0 p-3 d-flex align-items-center gap-2" style="z-index:10;">
+                              <button class="fav-btn-heart shadow-sm" onclick="toggleFavoriteByName('${safeName}', event)" title="Save to Favorites">
+                                 <i class="${favActive}"></i>
+                              </button>
+                              <span class="badge bg-warning text-dark font-extrabold px-2.5 py-1.5 rounded-pill shadow-sm d-flex align-items-center gap-1">
+                                 ⭐ ${item.rating || 4.5}
+                              </span>
+                           </div>
+
+                           <div class="mimg position-relative" style="height:200px; overflow:hidden;">
+                              <img src="${item.image_url || '/static/img/menu/1.jpg'}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;" />
+                              <div class="score-badge">${item['Match Score'] || 'Recommended'}</div>
+                           </div>
+                           <div class="mbody p-3">
+                              <div class="mcat text-uppercase text-muted small fw-bold">${item.cuisine || 'Dining'} • <span class="text-success fw-bold">${item.rm_price || 'RM 28.50'}</span></div>
+                              <div class="mtit fs-5 fw-bold text-dark my-1">${item.name}</div>
+                              <div class="mdesc text-muted small mb-2">📍 ${item.location || 'Area'} | ✨ ${item.features || 'WiFi'}</div>
+                              <div class="badge bg-light text-primary border border-primary-subtle p-2 mb-3 text-start w-100 text-truncate" title="${item.match_reason}">
+                                 💡 ${item.match_reason || 'Matched via AI Model'}
+                              </div>
+                              <div class="d-flex justify-content-between align-items-center">
+                                 <span class="badge bg-success fs-6">${item.rm_price || 'RM 28.50'}</span>
+                                 <button class="btn btn-sm btn-inspect-gradient rounded-pill px-3 py-1.5 fw-bold" onclick="openDetailModal('${safeName}'); event.stopPropagation();">
+                                    <i class="fas fa-eye me-1"></i>Inspect Details
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     `;
+                     grid.innerHTML += cardHtml;
+                  });
+               } else {
+                  grid.innerHTML = `<div class="col-12 text-center p-5 fs-5 text-muted">${data.message || 'No recommendations found.'}</div>`;
+               }
+            });
+         }
+
+         // Quiz Handler
+         document.getElementById('btnRunQuiz').addEventListener('click', function() {
+            fetch('/api/quiz', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                  occasion: document.getElementById('quizOccasion').value,
+                  vibe: document.getElementById('quizVibe').value,
+                  budget: document.getElementById('quizBudget').value
+               })
+            })
+            .then(res => res.json())
+            .then(data => {
+               const grid = document.getElementById('quizGrid');
+               grid.innerHTML = '';
+               if (data.results && data.results.length > 0) {
+                  window.quizResults = data.results;
+                  data.results.forEach((item, idx) => {
+                     const safeName = (item.name || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                     grid.innerHTML += `
+                     <div class="col-sm-6 col-lg-4">
+                        <div class="card border-0 rounded-4 shadow-sm overflow-hidden mcard cursor-pointer" onclick="openDetailModal('${safeName}')">
+                           <img src="${item.image_url || '/static/img/menu/1.jpg'}" style="height:180px; object-fit:cover;" />
+                           <div class="card-body">
+                              <span class="badge bg-primary mb-2">${item['Match Score'] || 'Match'}</span>
+                              <h5 class="fw-bold">${item.name}</h5>
+                              <p class="text-muted small">🍕 ${item.cuisine} | <strong class="text-success">${item.rm_price || 'RM 35.00'}</strong> | 📍 ${item.location}</p>
+                           </div>
+                        </div>
+                     </div>
+                     `;
+                  });
+               }
+            });
+         });
+
+         // 0ms Instant Response Modal Handler
+         function openDetailModal(name) {
+            console.log("Opening detail modal for:", name);
+            if (!name) return;
+
+            const modal = document.getElementById('menuPop');
+            if (!modal) return;
+
+            // 1. INSTANT VISUAL FEEDBACK (0ms Delay)
+            modal.style.display = 'flex';
+
+            // Find item in local cache if available
+            const localItem = (window.currentResults || []).find(r => r.name === name) || (window.quizResults || []).find(r => r.name === name);
+            if (localItem) {
+               document.getElementById('mpImg').src = localItem.image_url || '/static/img/menu/1.jpg';
+               document.getElementById('mpCat').innerText = (localItem.cuisine || 'Dining') + ' • ' + (localItem.location || 'Area');
+               document.getElementById('mpTitle').innerText = localItem.name;
+               document.getElementById('mpStars').innerText = '⭐ ' + (localItem.rating || 4.5) + ' / 5.0 Rating';
+               document.getElementById('mpPrice').innerText = 'Price: ' + (localItem.rm_price || 'RM 35.50');
+               document.getElementById('mpDesc').innerText = localItem.features || 'Features WiFi, outdoor seating, and verified customer reviews.';
+
+               const q = encodeURIComponent(localItem.name + ' ' + (localItem.location || ''));
+               document.getElementById('mpMapLink').href = 'https://www.google.com/maps/search/?api=1&query=' + q;
+               document.getElementById('mpSearchLink').href = 'https://www.google.com/search?q=' + q + '+restaurant';
+               document.getElementById('mpTripLink').href = 'https://www.tripadvisor.com/Search?q=' + q;
+               document.getElementById('mpFoodLink').href = 'https://food.grab.com/my/en/restaurants?search=' + encodeURIComponent(localItem.name);
+            }
+
+            // 2. BACKGROUND FETCH FOR FULL REVIEWS
+            fetch('/api/restaurant/' + encodeURIComponent(name))
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 'success') {
+                  const r = data.restaurant;
+                  document.getElementById('mpImg').src = r.image_url || '/static/img/menu/1.jpg';
+                  document.getElementById('mpCat').innerText = (r.cuisine || 'Dining') + ' • ' + (r.location || 'Area');
+                  document.getElementById('mpTitle').innerText = r.name || name;
+                  document.getElementById('mpStars').innerText = '⭐ ' + (r.rating || 4.5) + ' / 5.0 Rating';
+                  document.getElementById('mpDesc').innerText = r.features || 'Features WiFi, outdoor seating, and verified customer reviews.';
+                  document.getElementById('mpPrice').innerText = 'Price: ' + (r.rm_price || 'RM 35.50');
+                  document.getElementById('rFood').innerText = r.rating_food || '4.9';
+                  document.getElementById('rServ').innerText = r.rating_service || '4.8';
+                  document.getElementById('rAmb').innerText = r.rating_ambience || '4.9';
+                  document.getElementById('rVal').innerText = r.rating_value || '4.7';
+
+                  const queryEncoded = encodeURIComponent((r.name || name) + ' ' + (r.location || ''));
+                  document.getElementById('mpMapLink').href = 'https://www.google.com/maps/search/?api=1&query=' + queryEncoded;
+                  document.getElementById('mpSearchLink').href = 'https://www.google.com/search?q=' + queryEncoded + '+restaurant';
+                  document.getElementById('mpTripLink').href = 'https://www.tripadvisor.com/Search?q=' + queryEncoded;
+                  document.getElementById('mpFoodLink').href = 'https://food.grab.com/my/en/restaurants?search=' + encodeURIComponent(r.name || name);
+
+                  const revContainer = document.getElementById('mpReviews');
+                  if (revContainer) {
+                     revContainer.innerHTML = '';
+                     if (r.reviews && r.reviews.length > 0) {
+                        r.reviews.forEach(rev => {
+                           revContainer.innerHTML += `
+                           <div class="p-2 mb-2 bg-light rounded-3">
+                              <div class="d-flex align-items-center mb-1">
+                                 <img src="${rev.avatar}" class="rounded-circle me-2" style="width:28px; height:28px; object-fit:cover;" />
+                                 <strong class="small me-2">${rev.author}</strong>
+                                 <span class="text-warning small">${'⭐'.repeat(Math.round(rev.rating))}</span>
+                                 <small class="text-muted ms-auto">${rev.date}</small>
+                              </div>
+                              <p class="small text-muted mb-0">"${rev.comment}"</p>
+                           </div>
+                           `;
+                        });
+                     }
+                  }
+               }
+            })
+            .catch(err => {
+               console.error("Error fetching detail:", err);
+            });
+         }
+
+         function closeDetailModal() {
+            const modal = document.getElementById('menuPop');
+            if (modal) {
+               modal.style.display = 'none';
+            }
+         }
+
+         // Backdrop click close modal
+         document.getElementById('menuPop').addEventListener('click', function(e) {
+            if (e.target === this) {
+               closeDetailModal();
+            }
+         });
+
+         // Initial fetch on page load
+         fetchRecommendations();
+      </script>
+   </body>
+</html>
